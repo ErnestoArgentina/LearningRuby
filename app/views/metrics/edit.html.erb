@@ -1,0 +1,20 @@
+<h1>Edit metric</h1>
+
+<%= form_for :metric, url: metric_path(@metric), data: { turbo: false }, method: :patch do |f|%>
+    <% if @metric.errors.any? %>
+        <% @metric.errors.full_messages.each do |msg| %>
+            <div class="alert alert-danger"> <%= msg %> </div>
+        <% end %>
+    <% end %>
+    <p>
+        <%=f.label :name%> <br>
+        <%=f.text_field(:name, {:class=>'form-control'}) %>
+    </p>
+    <p>
+        <%=f.label :value%> <br>
+        <%=f.text_field(:value, {:class=>'form-control'}) %>
+    </p>
+    <p>
+        <%=f.submit :class=>'btn btn-primary' %> <br>
+    </p>
+<% end %>
