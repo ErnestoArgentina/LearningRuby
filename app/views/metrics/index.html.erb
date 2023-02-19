@@ -1,0 +1,41 @@
+<h1>Metrics</h1>
+
+<table class="table">
+    <tr>
+        <td>
+            <b> Name </b>
+        </td>
+        <td>
+            <b> Value </b>
+        </td>
+        <td>
+            <b> Created At </b>
+        </td>
+        <td>
+            <b> Action </b>
+        </td>
+    </tr>
+    <% @metrics.each do |metric|%>
+    <tr>
+        <td>
+            <%=metric.name%>
+        </td>
+        <td>
+            <%=metric.value%>
+        </td>
+        <td>
+            <%=metric.created_at%>
+        </td>
+        <td>
+            <%= link_to "Edit", edit_metric_path(metric), :class=>'btn btn-primary' %>
+            <%# <%= link_to "Delete", metric_path(metric),
+                 method: :delete, 
+                 data: {confirm: "Are you sure?"},
+                 :class => 'btn btn-danger' %> %>
+
+                 <%= button_to "delete", {:controller => :metrics,
+      :action => 'destroy', data: {confirm: "Are you sure?"}, :id => metric.id }, :method => :delete,  :class => 'btn btn-danger'%>
+        </td>
+    </tr>
+    <%end%>
+</table>
