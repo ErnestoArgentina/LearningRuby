@@ -4,6 +4,7 @@ class MetricsController < ApplicationController
         # render json: @metrics
     end
 
+    # get all metrics (API)
     def getMetrics
         @metrics = Metric.all
         render json: @metrics
@@ -31,10 +32,12 @@ class MetricsController < ApplicationController
         params.require(:metric).permit(:name, :value)
     end
 
+    # show details of a specific metric
     def show
         @metric = Metric.find(params[:id])
     end
 
+    # show the form of the metric to edit
     def edit
         @metric = Metric.find(params[:id])
     end
@@ -50,22 +53,21 @@ class MetricsController < ApplicationController
         end
     end
 
+    # detete metric metric by id
     def destroy
         @metric = Metric.find(params[:id])
         @metric.destroy
         redirect_to metrics_path
     end
 
+    # get averages of metrics per minute
     def timelineMinute
         metrics = Metric.all
 
         grouped_by_minute = metrics.group_by { |d| d[:created_at].strftime('%Y-%m-%d %H:%M') }
-        # render json: grouped_by_minute 
-        # Calculate the average for each hour
+        # Calculate the average for each minute
         averages = {}
         grouped_by_minute.each do |minute, arry|
-            # hour = metric.created_at.beginning_of_hour
-            # hour = metric.group_by { |d| d[:created_at].strftime('%Y-%m-%d %H:%M') }
             arry.each do |metric|
                 if averages[minute]
                     averages[minute][:count] += 1
@@ -88,6 +90,7 @@ class MetricsController < ApplicationController
         render json: dataR
     end
 
+    # get the average per hour
     def timeline
         metrics = Metric.all
 
@@ -115,6 +118,7 @@ class MetricsController < ApplicationController
         render json: dataR
     end
 
+    # get the average per day
     def timelineDay
         metrics = Metric.all
 
@@ -133,7 +137,6 @@ class MetricsController < ApplicationController
         averages.each do |day, data|
             averages[day][:value] = averages[day][:value]/data[:count]
         end
-        # render json: averages
 
         # Format the data as an array of objects
         dataR = []
