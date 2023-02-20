@@ -59,27 +59,31 @@ class MetricsController < ApplicationController
     def timelineMinute
         metrics = Metric.all
 
+        grouped_by_minute = metrics.group_by { |d| d[:created_at].strftime('%Y-%m-%d %H:%M') }
+        # render json: grouped_by_minute 
         # Calculate the average for each hour
         averages = {}
-        metrics.each do |metric|
+        grouped_by_minute.each do |minute, arry|
             # hour = metric.created_at.beginning_of_hour
-            hour = metric.group_by { |d| d[:created_at].strftime('%Y-%m-%d %H:%M') }
-            if averages[hour]
-                averages[hour][:count] += 1
-                averages[hour][:value] += metric.value
-            else
-                averages[hour] = { count: 1, value: metric.value }
+            # hour = metric.group_by { |d| d[:created_at].strftime('%Y-%m-%d %H:%M') }
+            arry.each do |metric|
+                if averages[minute]
+                    averages[minute][:count] += 1
+                    averages[minute][:value] += metric.value
+                else
+                    averages[minute] = { count: 1, value: metric.value }
+                end
             end
         end
 
-        averages.each do |hour, data|
-            averages[hour][:value] = averages[hour][:value]/data[:count]
+        averages.each do |minute, data|
+            averages[minute][:value] = averages[minute][:value]/data[:count]
         end
 
         # Format the data as an array of objects
         dataR = []
-        averages.each do |hour, data|
-            dataR << { hour: hour, value: data[:value] }
+        averages.each do |minute, data|
+            dataR << { minute: minute, value: data[:value] }
         end
         render json: dataR
     end
